@@ -49,7 +49,7 @@ export default {
       // } else {
       //   this.$set(item, 'show', !item.show)
       // }
-      console.log(item.show)
+      // console.log(item.show)
       if (typeof item.show === 'undefined') {
         this.$set(item, 'show', true)
       } else {
