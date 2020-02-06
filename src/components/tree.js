@@ -50,7 +50,10 @@ export default class Tree {
         item.selected = !value
         console.log(item.title, item.selected)
         if(item.selected) {
+          if(item && item.child && item.child.length === 0 )
           that.selectedNode.push(item.title)
+          else 
+          return 
         } else {
           that.delItem(item.title)
         }
