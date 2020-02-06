@@ -14,6 +14,7 @@ export const dispatchSelected = (item, value) => {
   // return deepclone(item)
 }
 
+// 树形结构遍历
 export const treeIterate = function(fn){
   return function Iterate(obj,value) {
   if(obj){
@@ -24,4 +25,12 @@ export const treeIterate = function(fn){
     }
   }
  }
+}
+// 删除数组中value的值
+export const delItem = function (selectedNode,value) {
+  for (let i = 0 ; i < selectedNode.length ; i++ ){
+    if(selectedNode[i] === value) {
+      selectedNode.splice(i,1)
+    }
+  }
 }

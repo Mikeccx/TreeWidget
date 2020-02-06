@@ -10,12 +10,12 @@
             {{item.title}}
           </div>
           <label @click.stop="node.clickSelect(item)">
-            <input class= 'checkbox' type="checkbox" :checked="item.selected" />
-            {{item.selected}}
+            <input class= 'checkbox' type="checkbox" :checked="item.selected"/>
+            <!-- {{item.selected}} -->
           </label>
         </div>
-          <template v-if="item.show && item.child">
-              <persontree  :tree="item.child"></persontree>
+          <template>
+              <persontree   v-show="item.show && item.child" :tree="item.child" :node = "node"></persontree>
           </template>
 
       </li>
@@ -23,26 +23,32 @@
 </template>
 <script>
 // import { dispatchSelected } from '@/utils/function.js'
-import Tree from './tree'
+// import Tree from './tree'
 export default {
   name: 'persontree',
   props: {
-    tree: {}
+    tree: {},
+    node: {}
   },
   data () {
     return {
       isshow: true,
       res: [],
       selectedList: [],
-      node: '',
+      // treeChild: this.tree,
       test: []
     }
   },
   mounted () {
-    console.log('i am coming')
-    this.node = new Tree(this.tree)
+    console.log('i am coming', this.tree)
+    // this.node = new Tree(this.tree)
+  },
+  computed: {
   },
   methods: {
+    getChange (val) {
+      console.log('change', val)
+    },
     up (item) {
       // if (typeof item.show === 'undefined') {
       //   this.$set(item, 'show', false)

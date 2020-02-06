@@ -16,16 +16,23 @@
                 <input placeholder="搜索" type="text">
               </div>
               <div class="person-tree" >
-                <personTree :tree='tree' class="person-tree-spc" @selectedList = 'getSelected'></personTree>
+                <personTree :tree='node.tree' :node="node" class="person-tree-spc" @selectedList = 'getSelected'></personTree>
               </div>
            </div>
            <div class="person-right">
              <div class="person-right-header">
-                已选人员: 0人
+                已选人员: {{node.selectedNode && node.selectedNode.length}}人
              </div>
              <ul>
-               <li v-for="item in selectedList" :key=item.id>
-                 <div>{{item.title}}</div>
+               <li v-for="item in node.selectedNode" :key=item.id class="addedlist">
+                 <div>{{item}}</div>
+                 <div>
+                   <svg class="icon"
+                     @click="node.delItem(item.title)"
+                     aria-hidden="true">
+                    <use xlink:href="#icon-chacha"></use>
+                  </svg>
+                 </div>
                </li>
              </ul>
            </div>
@@ -224,6 +231,10 @@ export default {
           display: flex;
           align-items: center;
           justify-content: flex-start;
+        }
+        .addedlist{
+          display: flex;
+          justify-content: space-between;
         }
       }
     }
