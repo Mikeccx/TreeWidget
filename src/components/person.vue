@@ -25,10 +25,10 @@
              </div>
              <ul>
                <li v-for="item in node.selectedNode" :key=item.id class="addedlist">
-                 <div>{{item}}</div>
+                 <div>{{item.title}}</div>
                  <div>
                    <svg class="icon"
-                     @click="node.delItem(item)"
+                     @click="node.delItem(item.title)"
                      aria-hidden="true">
                     <use xlink:href="#icon-chacha"></use>
                   </svg>

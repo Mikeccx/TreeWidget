@@ -51,7 +51,7 @@ export default class Tree {
         console.log(item.title, item.selected)
         if(item.selected) {
           if(item && item.child && item.child.length === 0 )
-          that.selectedNode.push(item.title)
+          that.selectedNode.push(item)
           else 
           return 
         } else {
@@ -66,7 +66,8 @@ export default class Tree {
     delItem (value) {
       console.log('haha')
       for (let i = 0 ; i < this.selectedNode.length ; i++ ){
-        if(this.selectedNode[i] === value) {
+        if(this.selectedNode[i].title === value) {
+          this.selectedNode[i].selected = false
           this.selectedNode.splice(i,1)
         }
       }
