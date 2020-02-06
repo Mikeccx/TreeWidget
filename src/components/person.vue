@@ -28,7 +28,7 @@
                  <div>{{item}}</div>
                  <div>
                    <svg class="icon"
-                     @click="node.delItem(item.title)"
+                     @click="node.delItem(item)"
                      aria-hidden="true">
                     <use xlink:href="#icon-chacha"></use>
                   </svg>
