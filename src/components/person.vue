@@ -40,8 +40,8 @@
        </div>
 
        <div class="person-footer">
-        <button>取消</button>
-        <button>确定</button>
+        <button @click="cancelPerson">取消</button>
+        <button @click="confirm">确定</button>
        </div>
      </div>
     </div>
@@ -142,6 +142,9 @@ export default {
     getSelected (value) {
       console.log('value', value)
       this.selectedList = value
+    },
+    confirm () {
+      console.log('selected', this.node.selectedNode)
     }
   },
   components: {
