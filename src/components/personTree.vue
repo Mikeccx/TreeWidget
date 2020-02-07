@@ -1,7 +1,8 @@
 <template>
-    <ul>
+    <ul class="item">
       <li v-for="item in tree" :key = item.index >
         <div class="hover" @click="node.clickNode(item)">
+          <div class="item-left">
           <svg :class="!(item && item.child && item.child.length!=0)?'icon hidden':(!item.show? 'icon':'icon icon-selected') "
                   aria-hidden="true">
                 <use xlink:href="#icon-shixiangxiajiantou-"></use>
@@ -9,10 +10,13 @@
           <div class="title">
             {{item.title}}
           </div>
+          </div>
+          <div class="item-right">
           <label @click.stop="node.clickSelect(item)">
             <input class= 'checkbox' type="checkbox" :checked="item.selected"/>
             <!-- {{item.selected}} -->
           </label>
+          </div>
         </div>
           <template>
               <persontree   v-show="item.show && item.child" :tree="item.child" :node = "node"></persontree>
@@ -90,6 +94,11 @@ li{
   display: flex;
   flex-wrap: nowrap;
   cursor: pointer;
+  justify-content: space-between;
+  .item-left{
+    display: flex;
+    flex-wrap: nowrap;
+  }
 
 }
 .hover:hover{

@@ -213,6 +213,7 @@ export default {
         }
         .person-tree{
           height: 80%;
+          padding-right: 20px;
           overflow: auto;
           display: flex;
           justify-content: flex-start;
