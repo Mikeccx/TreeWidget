@@ -37,7 +37,7 @@ export default class Tree {
     // 点击选中按钮
     clickNode (item) {
       item.show = !item.show
-      console.log('item',item)
+      console.log('item',item && item.child && item.child.length === 0)
     }
     // 选中点击事件，自上而下传递
     clickSelect (item) {
@@ -50,7 +50,7 @@ export default class Tree {
         item.selected = !value
         console.log(item.title, item.selected)
         if(item.selected) {
-          if(item && item.child && item.child.length === 0 )
+          if(item && item.child && item.child.length===0 )
           that.selectedNode.push(item)
           else 
           return 
@@ -62,7 +62,7 @@ export default class Tree {
       treeIterate(selected)(item, value)
       console.log('selectedNode', that.selectedNode)
     }
-    // 删除某一节点 
+    // 删除某一节点 存在问题，面前是通过名字删除，更加准确的应该通过唯一性id删除
     delItem (value) {
       console.log('haha')
       for (let i = 0 ; i < this.selectedNode.length ; i++ ){

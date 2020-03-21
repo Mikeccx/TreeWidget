@@ -93,43 +93,43 @@ export default {
         {
           title: '一级标题2',
           child: [{ title: '二级标题',
-            child: [{ title: '三级标题' }]
+            child: [{ title: '三级标题', child: [] }]
           }]
         },
         {
           title: '一级标题3',
           child: [{ title: '二级标题',
-            child: [{ title: '三级标题' }]
+            child: [{ title: '三级标题', child: [] }]
           }]
         },
         {
           title: '一级标题4',
           child: [{ title: '二级标题',
-            child: [{ title: '三级标题' }]
+            child: [{ title: '三级标题', child: [] }]
           }]
         },
         {
           title: '一级标题4',
           child: [{ title: '二级标题',
-            child: [{ title: '三级标题' }]
+            child: [{ title: '三级标题', child: [] }]
           }]
         },
         {
           title: '一级标题4',
           child: [{ title: '二级标题',
-            child: [{ title: '三级标题' }]
+            child: [{ title: '三级标题', child: [] }]
           }]
         },
         {
           title: '一级标题4',
           child: [{ title: '二级标题',
-            child: [{ title: '三级标题' }]
+            child: [{ title: '三级标题', child: [] }]
           }]
         },
         {
           title: '一级标题4',
           child: [{ title: '二级标题',
-            child: [{ title: '三级标题' }]
+            child: [{ title: '三级标题', child: [] }]
           }]
         }
       ]
