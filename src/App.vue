@@ -3,8 +3,7 @@
         <person v-if="isPopPerson" :tree = tree
         @cancelPerson="isPopPerson = false"></person>
 
-        <org v-if="isPopOrg" :tree = tree
-        @cancelPerson="isPopOrg = false"></org>
+        <org v-if="isPopOrg" :tree = tree @cancelOrg="isPopOrg = false"></org>
 
         <button @click="PopPerson">点击弹出</button>
         <button @click="PopOrg">点击弹出部门桥</button>
@@ -30,12 +29,14 @@ export default {
         }
     },
     async created () {
-        this.getInit()
+        // this.getInit()
+        this.baseIndex()
         //   console.log('s',this.tree)
     },
     mounted () {
     },
     methods: {
+
         PopPerson () {
             this.isPopPerson = true
         },
@@ -46,6 +47,20 @@ export default {
         async getInit() {
             let res = await this.$http({url:'/test/getData/'})
             this.tree = res.tree
+        },
+
+        async baseIndex () {
+            let res = await this.$http(
+                {
+                    url:'/base/index',
+                    method: 'GET',
+                    params: {
+                        ticket: 'APPURLWITHTICKET71ddac5b5292dc72232cb3132fda104b',
+                        eid: '19252765'
+                    }
+                }
+            )
+            // this.tree = res.tree
         }
     }
 }

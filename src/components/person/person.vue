@@ -115,6 +115,7 @@ export default {
         confirm () {
             console.log('selected', this.node.selectedNode)
         }
+        
   },
   components: {
         personTree

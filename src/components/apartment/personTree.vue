@@ -3,12 +3,16 @@
         <li v-for="item in tree" :key = item.id>
             <div class="hover" @click="node.clickNode(item)">
                 <div class="item-left">
-                    <svg :class="!(item && item.child && item.child.length!=0)?'icon hidden':(!item.show? 'icon':'icon icon-selected') "
+                    <!-- <svg :class="!(item && item.child && item.child.length!=0)?'icon hidden':(!item.show? 'icon':'icon icon-selected') "
+                            aria-hidden="true">
+                            <use xlink:href="#icon-shixiangxiajiantou-"></use>
+                    </svg> -->
+                    <svg :class="!(item && item.child && item.child.length!=0)?'icon':(!item.show? 'icon':'icon icon-selected') "
                             aria-hidden="true">
                             <use xlink:href="#icon-shixiangxiajiantou-"></use>
                     </svg>
                     <div class="title">
-                        {{item.title}}
+                        {{item.longName}}
                     </div>
                 </div>
                 <div class="item-right">
@@ -18,7 +22,7 @@
                 </div>
             </div>
             <template>
-                <persontree v-if="item.show && item.child" :tree="item.child" :node = "node"></persontree>
+                <persontree v-if="item.show" :tree="item.child" :node = "node"></persontree>
             </template>
         </li>
         <!-- <li v-for="item in tree" :key = item.key>
@@ -56,6 +60,8 @@ export default {
   },
   mounted () {
     console.log('i am coming', this.tree)
+    console.log('props', this.tree)
+    console.log('props', this.node)
     // this.node = new Tree(this.tree)
   },
   computed: {
@@ -80,6 +86,7 @@ export default {
     },
     clickNode (item) {
       item.show = !item.show
+      debugger
       this.$nextTick((value) => {
         console.log(value)
       })

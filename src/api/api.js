@@ -1,12 +1,13 @@
 import axios from 'axios'
 axios.defaults.timeout = 10000;
-
+const root = '/yzjWxRunService'
 export default async (options) => {
     const params = {
         // appId: env.appId,
         // ticket: env.ticket,
         ...options.params,
     }
+    // debugger
     const data = options.data || {}
     // removeEmptyKey(params)
     // removeEmptyKey(data)
@@ -17,7 +18,7 @@ export default async (options) => {
         //     loading.show()
         // }
         const res = await axios({
-            url: options.url,
+            url: root + options.url,
             method: options.method || 'GET',
             headers: options.headers || {},
             params,

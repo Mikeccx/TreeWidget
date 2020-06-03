@@ -1,5 +1,6 @@
 import { treeIterate,delItem } from '@/utils/function'
 import Vue from 'vue'
+import http from '@/api/api.js'
 // 树形结构
 export default class Tree {
     constructor (tree) {
@@ -15,6 +16,8 @@ export default class Tree {
         let init = function (obj) {
             Vue.set(obj,'selected',false)
             Vue.set(obj,'show',false)
+            Vue.set(obj,'child',[])
+
         }
         for (let i = 0; i < obj.length; i++){
             treeIterate(init)(obj[i])
@@ -24,9 +27,17 @@ export default class Tree {
         }
     }
     // 点击选中按钮
-    clickNode (item) {
+    async clickNode (item) {
         item.show = !item.show
-        console.log('item',item)
+        if (!(item.child && item.child.length)) {            
+            let res = await http((
+                {
+                    url:'/org/depTree',
+                    params: {orgId: item.orgId}
+                }
+            ))
+            item.child = res
+        }
     }
     // 选中点击事件，自上而下传递
     clickSelect (item) {

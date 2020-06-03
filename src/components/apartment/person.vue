@@ -1,10 +1,10 @@
 <template>
-    <div class="page-warper" @click="cancelPerson">
+    <div class="page-warper" @click="cancelOrg">
         <div class="person-warper" @click.stop>
         <div class="person-header">
                 <span>选择部门</span>
                 <svg class="icon"
-                        @click="cancelPerson"
+                        @click="cancelOrg"
                         aria-hidden="true">
                         <use xlink:href="#icon-chacha"></use>
                 </svg>
@@ -15,13 +15,13 @@
 
                 <div class="person-search">
                     <svg class="searchicon"
-                        @click="cancelPerson"
+                        @click="cancelOrg"
                         aria-hidden="true">
                         <use xlink:href="#icon-sousuo"></use>
                     </svg>
                     <input placeholder="搜索" type="text" @input="test($event,onSearch)" :value="keyword">
                 </div>
-
+                <!-- 搜索模块 -->
                 <div class="person-tree" v-if="keyword">
                     <ul>
                         <li v-for="item in searchRes" :key='item.id' class="addedlist">
@@ -37,7 +37,7 @@
                 </div>
 
                 <div class="person-tree" v-if="!keyword">
-                    <personTree :tree='node.tree' :node="node" :person='person' class="person-tree-spc" @selectedList = 'getSelected'></personTree>
+                    <personTree  :tree='node.tree' :node="node" :person='person' class="person-tree-spc" @selectedList = 'getSelected'></personTree>
                 </div>
             </div>
 
@@ -62,7 +62,7 @@
         </div>
 
         <div class="person-footer">
-            <button @click="cancelPerson">取消</button>
+            <button @click="cancelOrg">取消</button>
             <button @click="confirm">确定</button>
         </div>
         </div>
@@ -74,9 +74,9 @@ import Tree from './tree.js'
 import {debounce} from '@/utils/function'
 export default {
   name: 'person-select',
-  props: {
-      tree: {}
-  },
+//   props: {
+//       tree: {}
+//   },
   data () {
     return {
       selectedList: [],
@@ -106,8 +106,19 @@ export default {
         test: debounce((val)=>{
             val[1].call(null,val[0])
         }),
-        cancelPerson () {
-            this.$emit('cancelPerson', false)
+        async getInit() {
+            let res = await this.$http(
+                {
+                    url:'/org/depTree',
+                    params: { orgId: 'root'}
+                }
+            )
+            this.tree = res
+            this.node = new Tree(this.tree)
+        },
+        cancelOrg () {
+            console.log('1')
+            this.$emit('cancelOrg', false)
         },
         getSelected (value) {
             this.selectedList = value
@@ -119,13 +130,12 @@ export default {
   components: {
         personTree
   },
+  // 获取展示信息
+  async created () {
+      await this.getInit()
+  },
   mounted () {
     //   this.debounce()()
-    console.log(this.test)
-      console.log('prop',this.tree)
-      this.node = new Tree(this.tree)
-        // this.test()
-        // debugger
   }
 }
 </script>
