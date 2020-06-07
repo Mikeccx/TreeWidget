@@ -3,7 +3,7 @@
         <person v-if="isPopPerson" :tree = tree
         @cancelPerson="isPopPerson = false"></person>
 
-        <org v-if="isPopOrg" :tree = tree @cancelOrg="isPopOrg = false"></org>
+        <org v-if="isPopOrg" :tree = tree @cancelOrg="isPopOrg = false" :eid='eid' @selectedOrg="getOrg"></org>
 
         <button @click="PopPerson">点击弹出</button>
         <button @click="PopOrg">点击弹出部门桥</button>
@@ -25,7 +25,8 @@ export default {
         return {
             isPopPerson: false,
             isPopOrg: false,
-            tree: []
+            tree: [],
+            eid: 19252765
         }
     },
     async created () {
@@ -36,7 +37,8 @@ export default {
     mounted () {
     },
     methods: {
-
+        getOrg (val) {
+        },
         PopPerson () {
             this.isPopPerson = true
         },
@@ -55,7 +57,7 @@ export default {
                     url:'/base/index',
                     method: 'GET',
                     params: {
-                        ticket: 'APPURLWITHTICKET71ddac5b5292dc72232cb3132fda104b',
+                        ticket: 'APPURLWITHTICKET66faa5b21eb322b7e44d7cf2d590d4d2',
                         eid: '19252765'
                     }
                 }

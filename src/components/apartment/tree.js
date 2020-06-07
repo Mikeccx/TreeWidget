@@ -36,22 +36,33 @@ export default class Tree {
                     params: {orgId: item.orgId}
                 }
             ))
-            item.child = res
+            Vue.set(item,'child',res)
         }
     }
     // 选中点击事件，自上而下传递
     clickSelect (item) {
         item.selected = !item.selected
         if (item.selected) {
-            if(this.selectedNode.indexOf(item) === -1) {
+            if(!(this.selectedNode.find( ele => ele.id === item.id))) {
                     this.selectedNode.push(item)
             }
         } else {
-            if(this.selectedNode.indexOf(item) !== -1) {
+            if(this.selectedNode.find( ele => ele.id === item.id)) {
                 let index = this.selectedNode.indexOf(item)
                 this.selectedNode.splice(index,1)
             }
         }
+        // if (item.selected) {
+        //     debugger
+        //     if(this.selectedNode.indexOf(item) === -1) {
+        //             this.selectedNode.push(item)
+        //     }
+        // } else {
+        //     if(this.selectedNode.indexOf(item) !== -1) {
+        //         let index = this.selectedNode.indexOf(item)
+        //         this.selectedNode.splice(index,1)
+        //     }
+        // }
         // var that = this
         // let selected = function (item, value) {
         //     item.selected = !value
@@ -70,8 +81,9 @@ export default class Tree {
     }
     // 删除某一节点 
     delItem (value) {
+        console.log('tree', this.tree)
         for (let i = 0 ; i < this.selectedNode.length ; i++ ){
-            if(this.selectedNode[i].id === value) {
+            if(this.selectedNode[i].orgId === value) {
                 this.selectedNode[i].selected = false
                 this.selectedNode.splice(i,1)
             }

@@ -12,7 +12,7 @@
                             <use xlink:href="#icon-shixiangxiajiantou-"></use>
                     </svg>
                     <div class="title">
-                        {{item.longName}}
+                        {{item.name}}
                     </div>
                 </div>
                 <div class="item-right">
@@ -86,7 +86,6 @@ export default {
     },
     clickNode (item) {
       item.show = !item.show
-      debugger
       this.$nextTick((value) => {
         console.log(value)
       })

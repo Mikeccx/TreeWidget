@@ -24,11 +24,11 @@
                 <!-- 搜索模块 -->
                 <div class="person-tree" v-if="keyword">
                     <ul>
-                        <li v-for="item in searchRes" :key='item.id' class="addedlist">
-                            <div class="hover" @click="node.clickNode(item)">
+                        <li v-for="item in searchRes" :key='item.orgId' class="addedlist">
+                            <div class="hover" @click="node.clickSelect(item)">
                                 <div class="item-left">
                                     <div class="title">
-                                        {{item.title}}
+                                        {{item.name}}
                                     </div>
                                 </div>
                             </div>
@@ -43,14 +43,14 @@
 
             <div class="person-right">
                 <div class="person-right-header">
-                    已选人员: {{node.selectedNode && node.selectedNode.length}}人
+                    已选部门:
                 </div>
                 <ul>
                     <li v-for="item in node.selectedNode" :key=item.id class="addedlist">
-                        <div>{{item.title}}</div>
+                        <div>{{item.name}}</div>
                         <div>
                             <svg class="icon"
-                                    @click="node.delItem(item.id)"
+                                    @click="node.delItem(item.orgId)"
                                     aria-hidden="true">
                                     <use xlink:href="#icon-chacha"></use>
                             </svg>
@@ -97,11 +97,14 @@ export default {
             this.keyword = val.target.value
             let res = await this.$http(
                 {
-                    url:'/personsearch',
-                    params: this.keyword
+                    url:'/org/depTree',
+                    params: {
+                        orgId: '',
+                        searchKey: this.keyword
+                    }
                 }
             )
-            this.searchRes = res.person
+            this.searchRes = res
         },
         test: debounce((val)=>{
             val[1].call(null,val[0])
@@ -124,7 +127,8 @@ export default {
             this.selectedList = value
         },
         confirm () {
-            console.log('selected', this.node.selectedNode)
+            this.$emit('selectedOrg', this.node.selectedNode)
+            // console.log('selected', this.node.selectedNode)
         }
   },
   components: {
