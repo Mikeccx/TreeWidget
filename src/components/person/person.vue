@@ -19,25 +19,29 @@
                         aria-hidden="true">
                         <use xlink:href="#icon-sousuo"></use>
                     </svg>
-                    <input placeholder="搜索" type="text" @input="test($event,onSearch)" :value="keyword">
+                    <input placeholder="搜索" type="text" ref="searchBar" @input="test($event,onSearch)" :value="keyword" @keyup.enter="enterSearch">
                 </div>
 
                 <div class="person-tree" v-if="keyword">
-                    <ul>
+                    <ul v-if="searchRes.length">
                         <li v-for="item in searchRes" :key='item.id' class="addedlist">
                             <div class="hover" @click="node.clickNode(item);node.clickSelect(item)">
                                 <div class="item-left">
+                                    <img :src="item.photoUrl"/>
                                     <div class="title">
-                                        {{item.title}}
+                                        {{item.name}}
                                     </div>
                                 </div>
                             </div>
                         </li>
                     </ul>
+                    <ul v-if="!searchRes.length">
+                        <li  class="nodata">无数据</li>
+                    </ul>
                 </div>
 
                 <div class="person-tree" v-if="!keyword">
-                    <personTree :tree='node.tree' :node="node" :person='person' class="person-tree-spc" @selectedList = 'getSelected'></personTree>
+                    <personTree :tree='node.tree' :node="node"  class="person-tree-spc" @selectedList = 'getSelected' :ismulti = "ismulti"></personTree>
                 </div>
             </div>
 
@@ -46,8 +50,12 @@
                     已选人员: {{node.selectedNode && node.selectedNode.length}}人
                 </div>
                 <ul>
-                    <li v-for="item in node.selectedNode" :key=item.id class="addedlist">
-                        <div>{{item.title}}</div>
+                    <li v-for="item in node.selectedNode" :key=item.id class="addedlist hover">
+                        
+                        <div class="selected-left">
+                            <img :src="item.photoUrl"/>
+                            <span class="selected-name">{{item.name}}</span>
+                        </div>
                         <div>
                             <svg class="icon"
                                     @click="node.delItem(item.id)"
@@ -69,13 +77,17 @@
     </div>
 </template>
 <script>
-import personTree from '@/components/person/personTree'
+import personTree from './personTree'
 import Tree from './tree.js'
 import {debounce} from '@/utils/function'
 export default {
   name: 'persom-select',
   props: {
-      tree: {}
+    //   tree: {}
+    ismulti: {
+        type: Boolean,
+        default: false
+    }
   },
   data () {
     return {
@@ -84,6 +96,7 @@ export default {
       person:[],
       keyword: '',
       searchRes: [],
+      tree: {},
       timer: null
     }
   },
@@ -97,15 +110,50 @@ export default {
             this.keyword = val.target.value
             let res = await this.$http(
                 {
-                    url:'/personsearch',
-                    params: this.keyword
+                    url:'/org/personTree',
+                    params: {
+                        orgId: '',
+                        searchKey: this.keyword
+                    }
                 }
             )
-            this.searchRes = res.person
+
+            this.searchRes = res.personData
         },
         test: debounce((val)=>{
             val[1].call(null,val[0])
         }),
+        async enterSearch () {
+            if (this.$refs.searchBar.value === '') {
+                this.searchRes = []
+            }
+             this.keyword = this.$refs.searchBar.value
+            let res = await this.$http(
+                {
+                    url:'/org/depTree',
+                    params: {
+                        orgId: '',
+                        searchKey: this.$refs.searchBar.value || ''
+                    }
+                }
+            )
+            this.searchRes = res
+        },
+        async getInit() {
+            let res = await this.$http(
+                {
+                    url:'/org/personTree',
+                    params: { 
+                        orgId: 'root'
+                    }
+                }
+            )
+            this.tree = res
+            console.log('this.tree', this.tree)
+            this.node = new Tree(this.tree)
+            console.log('this.node', this.node)
+            // debugger
+        },
         cancelPerson () {
             this.$emit('cancelPerson', false)
         },
@@ -113,6 +161,7 @@ export default {
             this.selectedList = value
         },
         confirm () {
+            this.$emit('confirm', this.node.selectedNode || [])
             console.log('selected', this.node.selectedNode)
         }
         
@@ -120,17 +169,18 @@ export default {
   components: {
         personTree
   },
+  // 获取展示信息
+  async created () {
+      await this.getInit()
+  },
   mounted () {
-    //   this.debounce()()
-    console.log(this.test)
-      console.log('prop',this.tree)
-      this.node = new Tree(this.tree)
-        // this.test()
-        // debugger
   }
 }
 </script>
 <style lang="less" scoped>
+.nodata{
+    text-align: center;
+}
 // 外层幕遮
 .page-warper{
     height: 100%;
@@ -219,9 +269,20 @@ export default {
             justify-content: flex-start;
             }
             .addedlist{
-            display: flex;
-            justify-content: space-between;
-            padding-right: 20px;
+                display: flex;
+                justify-content: space-between;
+                padding-right: 20px;
+                .selected-left{
+                    display:flex;
+                    img{
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 50%;
+                    }
+                    .selected-name{
+                        margin-left: 10px;
+                    }
+                }
             }
         }
         }
@@ -254,7 +315,7 @@ export default {
             }
             }
             &:nth-of-type(2) {
-                background: #f59c25;
+                background: rgb(69, 152, 240);
             }
         }
         // background: red;
@@ -296,6 +357,14 @@ ul{
     .item-left{
         display: flex;
         flex-wrap: nowrap;
+        img{
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        .title {
+        margin-left: 10px;
+    }
     }
 
 }

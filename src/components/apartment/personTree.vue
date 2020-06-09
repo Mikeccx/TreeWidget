@@ -7,7 +7,7 @@
                             aria-hidden="true">
                             <use xlink:href="#icon-shixiangxiajiantou-"></use>
                     </svg> -->
-                    <svg :class="!(item && item.child && item.child.length!=0)?'icon':(!item.show? 'icon':'icon icon-selected') "
+                    <svg :class="!(item.show)?'icon':(!item.show? 'icon':'icon icon-selected') "
                             aria-hidden="true">
                             <use xlink:href="#icon-shixiangxiajiantou-"></use>
                     </svg>
@@ -16,13 +16,14 @@
                     </div>
                 </div>
                 <div class="item-right">
-                    <label @click.stop="node.clickSelect(item)">
+                    <label @click.stop.prevent="node.clickSelect(item, ismulti)">
                         <input class= 'checkbox' type="checkbox" :checked="item.selected"/>
+                        <span class="my-radio-border"></span>
                     </label>
                 </div>
             </div>
             <template>
-                <persontree v-if="item.show" :tree="item.child" :node = "node"></persontree>
+                <persontree v-if="item.show" :tree="item.child" :node = "node" :ismulti="ismulti"></persontree>
             </template>
         </li>
         <!-- <li v-for="item in tree" :key = item.key>
@@ -48,7 +49,11 @@ export default {
   name: 'persontree',
   props: {
     tree: {},
-    node: {}
+    node: {},
+    ismulti: {
+          type: Boolean,
+          default: false
+    }
   },
   data () {
     return {
@@ -59,6 +64,7 @@ export default {
     }
   },
   mounted () {
+      console.log('for real', this.ismulti)
     console.log('i am coming', this.tree)
     console.log('props', this.tree)
     console.log('props', this.node)
@@ -89,21 +95,74 @@ export default {
       this.$nextTick((value) => {
         console.log(value)
       })
-    },
-    selected (item, value) {
-      // if (item.selected) {
-      //   this.selectedList.push(item)
-      //   item.child.selected = false
-      //   this.$emit('selectedList', this.selectedList)
-      // } else {
-      // }
-      // dispatchSelected(item, value)
-      // console.log('selected', this.test)
     }
   }
 }
 </script>
 <style lang="less" scoped>
+.my-radio-border {
+  border: 1px solid #dcdfe6;
+  border-radius: 100%;
+  width: 14px;
+  height: 14px;
+  background-color: #fff;
+  position: relative;
+  cursor: pointer;
+  display: inline-block;
+  box-sizing: content-box;
+  margin-top: 2px;
+}
+.my-radio-border:hover {
+  border-color: #409eff;
+}
+label .text {
+  font-size: 14px;
+  vertical-align: top;
+  padding: 0 5px;
+}
+label input {
+  opacity: 0;
+  outline: none;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: 0;
+}
+label input:checked + span::after {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  margin: auto;
+  /* height: 6px;
+  width: 6px; */
+  border-radius: 100%;
+  background: #409eff;
+  border-color: #409eff;
+  transition: 1s;
+  animation: bescale 0.3s ease;
+  animation-fill-mode: forwards;
+}
+label input:checked + span + span {
+  color: #409eff;
+}
+@keyframes bescale {
+  from {
+    height: 0px;
+    width: 0px;
+  }
+  to {
+    height: 12px;
+    width: 12px;
+  }
+}
+
 li{
     margin-left: 20px;
 }

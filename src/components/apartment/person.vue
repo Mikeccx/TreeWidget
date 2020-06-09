@@ -19,13 +19,13 @@
                         aria-hidden="true">
                         <use xlink:href="#icon-sousuo"></use>
                     </svg>
-                    <input placeholder="搜索" type="text" @input="test($event,onSearch)" :value="keyword">
+                    <input placeholder="搜索" ref = "searchBar" type="text" @input="test($event,onSearch)" :value="keyword" @keyup.enter="enterSearch">
                 </div>
                 <!-- 搜索模块 -->
                 <div class="person-tree" v-if="keyword">
-                    <ul>
+                    <ul v-if="searchRes.length">
                         <li v-for="item in searchRes" :key='item.orgId' class="addedlist">
-                            <div class="hover" @click="node.clickSelect(item)">
+                            <div class="hover" @click="node.clickSelect(item, true)">
                                 <div class="item-left">
                                     <div class="title">
                                         {{item.name}}
@@ -34,10 +34,13 @@
                             </div>
                         </li>
                     </ul>
+                    <ul v-if="!searchRes.length">
+                        <li  class="nodata">无数据</li>
+                    </ul>
                 </div>
 
                 <div class="person-tree" v-if="!keyword">
-                    <personTree  :tree='node.tree' :node="node" :person='person' class="person-tree-spc" @selectedList = 'getSelected'></personTree>
+                    <personTree  :tree='node.tree' :node="node" :person='person' class="person-tree-spc" @selectedList = 'getSelected' :ismulti="ismulti"></personTree>
                 </div>
             </div>
 
@@ -46,7 +49,7 @@
                     已选部门:
                 </div>
                 <ul>
-                    <li v-for="item in node.selectedNode" :key=item.id class="addedlist">
+                    <li v-for="item in node.selectedNode" :key=item.id class="addedlist hover">
                         <div>{{item.name}}</div>
                         <div>
                             <svg class="icon"
@@ -69,14 +72,17 @@
     </div>
 </template>
 <script>
-import personTree from '@/components/apartment/personTree'
+import personTree from './personTree'
 import Tree from './tree.js'
 import {debounce} from '@/utils/function'
 export default {
   name: 'person-select',
-//   props: {
-//       tree: {}
-//   },
+  props: {
+      ismulti: {
+          type: Boolean,
+          default: false
+      }
+  },
   data () {
     return {
       selectedList: [],
@@ -109,6 +115,22 @@ export default {
         test: debounce((val)=>{
             val[1].call(null,val[0])
         }),
+        async enterSearch () {
+            if (this.$refs.searchBar.value === '') {
+                this.searchRes = []
+            }
+             this.keyword = this.$refs.searchBar.value
+            let res = await this.$http(
+                {
+                    url:'/org/depTree',
+                    params: {
+                        orgId: '',
+                        searchKey: this.$refs.searchBar.value || ''
+                    }
+                }
+            )
+            this.searchRes = res
+        },
         async getInit() {
             let res = await this.$http(
                 {
@@ -120,14 +142,14 @@ export default {
             this.node = new Tree(this.tree)
         },
         cancelOrg () {
-            console.log('1')
             this.$emit('cancelOrg', false)
         },
         getSelected (value) {
             this.selectedList = value
         },
         confirm () {
-            this.$emit('selectedOrg', this.node.selectedNode)
+            this.$emit('confirm', this.node.selectedNode || [])
+            this.cancelOrg()
             // console.log('selected', this.node.selectedNode)
         }
   },
@@ -137,6 +159,7 @@ export default {
   // 获取展示信息
   async created () {
       await this.getInit()
+      console.log('mutile', this.ismulti)
   },
   mounted () {
     //   this.debounce()()
@@ -144,6 +167,10 @@ export default {
 }
 </script>
 <style lang="less" scoped>
+.nodata{
+    display: flex;
+    justify-content: center;
+}
 // 外层幕遮
 .page-warper{
     height: 100%;
@@ -232,9 +259,9 @@ export default {
             justify-content: flex-start;
             }
             .addedlist{
-            display: flex;
-            justify-content: space-between;
-            padding-right: 20px;
+                display: flex;
+                justify-content: space-between;
+                padding-right: 20px;
             }
         }
         }
@@ -267,7 +294,7 @@ export default {
             }
             }
             &:nth-of-type(2) {
-                background: #f59c25;
+                background: rgb(69, 152, 240);
             }
         }
         // background: red;

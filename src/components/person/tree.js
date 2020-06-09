@@ -1,5 +1,8 @@
+/* eslint-disable */
 import { treeIterate,delItem } from '@/utils/function'
 import Vue from 'vue'
+import http from '@/api/api.js'
+
 // 树形结构
 export default class Tree {
     constructor (tree) {
@@ -24,20 +27,42 @@ export default class Tree {
         }
     }
     // 点击选中按钮
-    clickNode (item) {
+async clickNode (item) {
+        // item.show = !item.show
+        // console.log('item',item)
         item.show = !item.show
-        console.log('item',item)
+        if (!(item.child && item.child.length)) {            
+            let res = await http((
+                {
+                    url:'/org/personTree',
+                    params: {orgId: item.orgId}
+                }
+            ))
+            Vue.set(item,'child',res)
+        }
     }
     // 选中点击事件，自上而下传递
-    clickSelect (item) {
-        const value = item.selected
-        if(this.selectedNode.indexOf(item) === -1) {
-            if ( !(item.toString()==='{}') && !(item.child && item.child.length!=0) ) {
+    clickSelect (item, ismulti) {
+        // const value = item.selected
+        // if(this.selectedNode.indexOf(item) === -1) {
+        //     if ( !(item.toString()==='{}') && !(item.child && item.child.length!=0) ) {
+        //         this.selectedNode.push(item)
+        //     } else {
+        //         return
+        //     }
+        // }
+        // item.selected = !item.selected
+        if (ismulti) {
+            if(!(this.selectedNode.find( ele => ele.openId === item.openId))) {
                 this.selectedNode.push(item)
             } else {
-                return
+                let index = this.selectedNode.findIndex( ele => ele.openId === item.openId)
+                this.selectedNode.splice(index, 1)
             }
+        } else {
+            this.selectedNode.splice(0, 1, item)
         }
+        
         // var that = this
         // let selected = function (item, value) {
         //     item.selected = !value
@@ -77,4 +102,4 @@ export default class Tree {
       // }
       // treeIterate(this.tree)
     }
-};
+}

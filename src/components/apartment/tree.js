@@ -1,3 +1,4 @@
+/* eslint-disable */
 import { treeIterate,delItem } from '@/utils/function'
 import Vue from 'vue'
 import http from '@/api/api.js'
@@ -17,7 +18,6 @@ export default class Tree {
             Vue.set(obj,'selected',false)
             Vue.set(obj,'show',false)
             Vue.set(obj,'child',[])
-
         }
         for (let i = 0; i < obj.length; i++){
             treeIterate(init)(obj[i])
@@ -36,20 +36,40 @@ export default class Tree {
                     params: {orgId: item.orgId}
                 }
             ))
+            res.forEach((ele)=>{
+                ele.show = false
+                ele.selected = false
+            })
             Vue.set(item,'child',res)
         }
     }
     // 选中点击事件，自上而下传递
-    clickSelect (item) {
+    clickSelect (item, ismulti) {
         item.selected = !item.selected
-        if (item.selected) {
-            if(!(this.selectedNode.find( ele => ele.id === item.id))) {
-                    this.selectedNode.push(item)
+        if (ismulti) {
+            if (item.selected) {
+                if(!(this.selectedNode.find( ele => ele.orgId === item.orgId))) {
+                        this.selectedNode.push(item)
+                }
+            } else {
+                if(this.selectedNode.find( ele => ele.orgId === item.orgId)) {
+                    let index = this.selectedNode.findIndex( ele => ele.orgId === item.orgId)
+                    this.selectedNode.splice(index,1)
+                }
             }
         } else {
-            if(this.selectedNode.find( ele => ele.id === item.id)) {
-                let index = this.selectedNode.indexOf(item)
-                this.selectedNode.splice(index,1)
+            if (!this.selectedNode.length) {
+                if (item.selected) {
+                    this.selectedNode.push(item)
+                }
+            } else {
+                if (this.selectedNode[0].orgId === item.orgId) {
+                    this.selectedNode.pop()
+                } else {
+                    this.selectedNode[0].selected = false
+                    this.selectedNode.pop()
+                    this.selectedNode.push(item)
+                }
             }
         }
         // if (item.selected) {
@@ -88,6 +108,7 @@ export default class Tree {
                 this.selectedNode.splice(i,1)
             }
         }
+
     }
     // 获取已经选取的节点
     getSelectedNode () {
